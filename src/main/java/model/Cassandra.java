@@ -1,7 +1,8 @@
 package model;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
+
+import java.util.Set;
 
 public class Cassandra {
 
@@ -27,8 +28,47 @@ public class Cassandra {
     public void closeSession() {
         session.close();
     }
+    public boolean testConnection(){
+        Set<Host> nodes = session.getCluster().getMetadata().getAllHosts();
+        for(Host h: nodes){
+            System.out.println("host found: " + h);
+        }
 
-    public void read(){
-        System.out.println(session.getCluster().getMetadata().getAllHosts());
+        // return true if nodes are found
+        return nodes.size() > 0;
+
+//        above statement is an optimisation of the following if:
+//        if(nodes.size()>0){
+//            return true;
+//        }
+//        return false;
+    }
+
+    /**
+     * Reads a cassandra table and displays results
+     * WARNING: this is currently open to SQL injection
+     */
+    public void read(String keyspace, String table){
+        // todo - protect from SQL injections
+        String cqlStatement = "SELECT * FROM " + keyspace + "." + table;
+        ResultSet rs = session.execute(cqlStatement);
+        for (Row row : rs) {
+            System.out.println(row.toString());
+        }
+    }
+
+    /**
+     * creates cassandra keyspaces and tables AKA the schema.
+     */
+    public void createSchema(){
+        // IF NOT EXISTS allows this statement to run multiple times without throwing an exception
+        // this is essentially an idempotent query thanks to the 'IF NOT EXISTS'
+        String keyspace = "CREATE KEYSPACE IF NOT EXISTS customers WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};";
+        String table = "CREATE TABLE IF NOT EXISTS customers.user(id text, name text, address text, time_registered timestamp, PRIMARY KEY(id))";
+
+        session.execute(keyspace);
+        System.out.println("created keyspace");
+        session.execute(table);
+        System.out.println("created table");
     }
 }
