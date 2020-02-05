@@ -1,9 +1,8 @@
 package model;
 
 import com.datastax.driver.core.*;
+import util.TimeUtil;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Set;
 
 public class Cassandra {
@@ -61,7 +60,7 @@ public class Cassandra {
 
     /**
      * Inserts data to the customers keyspace and the user table
-     * Timestamp of creation is automatically inserted 
+     * Timestamp of creation is automatically inserted
      * @param id - The id of the customer
      * @param name - Name of customer
      * @param address - Address of customer
@@ -69,7 +68,7 @@ public class Cassandra {
     public void insert(String id, String name, String address) {
         String cqlStatementString = "INSERT INTO customers.user (id, name, address, time_registered) VALUES (?, ?, ?, ?)";
         PreparedStatement statement = session.prepare(cqlStatementString);
-        session.execute(statement.bind(id, name, address, new Timestamp(System.currentTimeMillis())));
+        session.execute(statement.bind(id, name, address, TimeUtil.getTimestamp()));
     }
 
     /**
