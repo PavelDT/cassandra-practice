@@ -11,6 +11,8 @@ public class CustomerApp {
         cassandraModel.insert(UUID.randomUUID().toString(), "Elliot", "the moon");
         // verify insert
         cassandraModel.read(" customers", "user");
+        // view system info
+        cassandraModel.getDbInfo();
         // ensure session gets terminated
         cassandraModel.closeSession();
     }

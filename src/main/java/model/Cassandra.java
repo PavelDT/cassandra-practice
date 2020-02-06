@@ -85,4 +85,23 @@ public class Cassandra {
         session.execute(table);
         System.out.println("created table");
     }
+
+    /**
+     * Function will display information about Cassandra Internals
+     * 1 - How many tables Cassandra has
+     * 2 - lists all nodes in the cluster
+     */
+    public void getDbInfo() {
+        String cqlStatement = "SELECT count(table_name) FROM system_schema.tables";
+        ResultSet rs = session.execute(cqlStatement);
+
+        Long tableCount = rs.one().getLong(0);
+        System.out.println("Number of tables: " + tableCount);
+
+        String cqlStatement2 = "SELECT cluster_name, host_id, listen_address FROM system.local";
+        ResultSet rs2 = session.execute(cqlStatement2);
+        for (Row row : rs2) {
+            System.out.println(row.toString());
+        }
+    }
 }
