@@ -22,8 +22,13 @@
             <version>4.13-beta-2</version>
             <scope>test</scope>
         </dependency>
-
-
+        <!-- https://mvnrepository.com/artifact/org.cassandraunit/cassandra-unit -->
+        <dependency>
+            <groupId>org.cassandraunit</groupId>
+            <artifactId>cassandra-unit</artifactId>
+            <version>3.11.2.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>

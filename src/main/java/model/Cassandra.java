@@ -20,6 +20,7 @@ public class Cassandra {
 
         Cluster cluster = Cluster.builder()
                 .addContactPoints(serverIP)
+                .withPort(9142)
                 .build();
 
         Session session = cluster.connect(keyspace);
@@ -74,7 +75,7 @@ public class Cassandra {
     /**
      * creates cassandra keyspaces and tables AKA the schema.
      */
-    public void createSchema(){
+    public boolean createSchema(){
         // IF NOT EXISTS allows this statement to run multiple times without throwing an exception
         // this is essentially an idempotent query thanks to the 'IF NOT EXISTS'
         String keyspace = "CREATE KEYSPACE IF NOT EXISTS customers WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};";
@@ -84,6 +85,8 @@ public class Cassandra {
         System.out.println("created keyspace");
         session.execute(table);
         System.out.println("created table");
+        // function complete to this point without error, schema created successfully
+        return true;
     }
 
     /**
